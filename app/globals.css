@@ -1,0 +1,73 @@
+@import "tailwindcss";
+
+@theme {
+  /* Brand palette */
+  --color-ink: #0a0a0a;
+  --color-ink-800: #141414;
+  --color-ink-700: #1c1c1e;
+  --color-cloud: #f4f4f5;
+  --color-cloud-200: #ececed;
+  --color-brand: #ff5a1f;
+  --color-brand-dark: #e64a12;
+  --color-brand-light: #ff7a4a;
+  --color-grape: #7c5cff;
+  --color-sand: #eaddcf;
+  --color-sand-light: #f0e6da;
+  --color-sand-deep: #d8c4ad;
+
+  /* Fonts wired from next/font CSS variables */
+  --font-display: var(--font-archivo);
+  --font-body: var(--font-inter);
+  --font-accent: var(--font-sora);
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #0a0a0a;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-body), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--color-brand);
+  color: #fff;
+}
+
+@utility glass {
+  background-color: color-mix(in srgb, white 62%, transparent);
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
+  backdrop-filter: blur(18px) saturate(150%);
+  border: 1px solid color-mix(in srgb, white 55%, transparent);
+}
+
+@utility glass-dark {
+  background-color: color-mix(in srgb, #0a0a0a 42%, transparent);
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
+  backdrop-filter: blur(18px) saturate(150%);
+  border: 1px solid color-mix(in srgb, white 12%, transparent);
+}
+
+@utility glass-grey {
+  background-color: color-mix(in srgb, #7c828c 15%, transparent);
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
+  backdrop-filter: blur(18px) saturate(150%);
+  border: 1px solid color-mix(in srgb, white 55%, transparent);
+}
