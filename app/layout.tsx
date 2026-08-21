@@ -5,7 +5,7 @@ import { siteConfig } from "@/lib/site";
 import { SmoothScroll } from "@/components/SmoothScroll";
 import "./globals.css";
 
-const GA_ID = process.env.NEXT_PUBLIC_GA_ID ?? siteConfig.gaId;
+const GA_ID = process.env.NEXT_PUBLIC_GA_ID || siteConfig.gaId;
 const GOOGLE_VERIFICATION = process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION;
 
 const archivo = Archivo({
