@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
 import { Archivo, Inter, Sora } from "next/font/google";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import { siteConfig } from "@/lib/site";
 import { SmoothScroll } from "@/components/SmoothScroll";
 import "./globals.css";
+
+const GA_ID = process.env.NEXT_PUBLIC_GA_ID ?? siteConfig.gaId;
+const GOOGLE_VERIFICATION = process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION;
 
 const archivo = Archivo({
   variable: "--font-archivo",
@@ -63,6 +67,9 @@ export const metadata: Metadata = {
     },
   },
   category: "technology",
+  verification: GOOGLE_VERIFICATION
+    ? { google: GOOGLE_VERIFICATION }
+    : undefined,
 };
 
 const jsonLd = {
@@ -117,6 +124,7 @@ export default function RootLayout({
         />
         <SmoothScroll>{children}</SmoothScroll>
       </body>
+      {GA_ID ? <GoogleAnalytics gaId={GA_ID} /> : null}
     </html>
   );
 }

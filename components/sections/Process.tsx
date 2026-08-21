@@ -52,7 +52,13 @@ export function Process() {
             viewport={viewport}
             className="lg:justify-self-end"
           >
-            <Button href="#contact" variant="brand" size="lg">
+            <Button
+              href="#contact"
+              variant="brand"
+              size="lg"
+              eventName="booking_click"
+              eventParams={{ location: "process" }}
+            >
               Book a growth call
             </Button>
           </motion.div>

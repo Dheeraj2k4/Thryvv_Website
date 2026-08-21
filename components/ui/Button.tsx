@@ -1,5 +1,8 @@
+"use client";
+
 import type { ComponentPropsWithoutRef, ReactNode } from "react";
 import { cn } from "@/lib/utils";
+import { trackEvent } from "@/lib/analytics";
 
 type Variant = "brand" | "brand-outline" | "dark" | "light" | "outline" | "glass";
 type Size = "md" | "lg";
@@ -29,6 +32,8 @@ type ButtonProps = {
   href?: string;
   children: ReactNode;
   className?: string;
+  eventName?: string;
+  eventParams?: Record<string, unknown>;
 } & Omit<ComponentPropsWithoutRef<"a">, "href">;
 
 export function Button({
@@ -37,11 +42,22 @@ export function Button({
   href,
   children,
   className,
+  eventName,
+  eventParams,
+  onClick,
   ...props
 }: ButtonProps) {
   const classes = cn(base, variants[variant], sizes[size], className);
   return (
-    <a href={href ?? "#"} className={classes} {...props}>
+    <a
+      href={href ?? "#"}
+      className={classes}
+      onClick={(e) => {
+        if (eventName) trackEvent(eventName, eventParams);
+        onClick?.(e);
+      }}
+      {...props}
+    >
       {children}
     </a>
   );

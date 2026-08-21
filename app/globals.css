@@ -71,3 +71,12 @@ body {
   backdrop-filter: blur(18px) saturate(150%);
   border: 1px solid color-mix(in srgb, white 55%, transparent);
 }
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}

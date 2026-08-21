@@ -176,7 +176,13 @@ export function Hero() {
           variants={fadeUp}
           className="mt-9 flex flex-wrap items-center justify-center gap-4"
         >
-          <Button href="#contact" variant="brand" size="lg">
+          <Button
+            href="#contact"
+            variant="brand"
+            size="lg"
+            eventName="cta_click"
+            eventParams={{ location: "hero" }}
+          >
             Start Your Growth
           </Button>
           <Button href="#services" variant="glass" size="lg">

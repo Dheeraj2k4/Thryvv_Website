@@ -7,9 +7,9 @@ import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 
 const links = [
+  { label: "Work", href: "#work" },
   { label: "Services", href: "#services" },
   { label: "Approach", href: "#approach" },
-  { label: "Impact", href: "#impact" },
   { label: "Process", href: "#process" },
 ];
 
@@ -82,7 +82,13 @@ export function Navbar() {
           </nav>
 
           <div className="hidden md:block">
-            <Button href="#contact" variant="brand-outline" size="md">
+            <Button
+              href="#contact"
+              variant="brand-outline"
+              size="md"
+              eventName="contact_click"
+              eventParams={{ location: "navbar" }}
+            >
               Get in Touch
             </Button>
           </div>
@@ -135,7 +141,12 @@ export function Navbar() {
                   {link.label}
                 </a>
               ))}
-              <Button href="#contact" className="mt-1 w-full">
+              <Button
+                href="#contact"
+                className="mt-1 w-full"
+                eventName="contact_click"
+                eventParams={{ location: "navbar_mobile" }}
+              >
                 Get in Touch
               </Button>
             </motion.nav>

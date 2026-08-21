@@ -7,6 +7,8 @@ export const siteConfig = {
   description:
     "Thryvv is a precision digital growth agency. We engineer aggressive, measurable growth through performance foundations, paid media scaling, and future-ready technical systems built to convert.",
   email: "thryvvdigital@gmail.com",
+  // Google Analytics 4 Measurement ID (public — safe to commit).
+  gaId: "G-3J935BMZL2",
   keywords: [
     "digital marketing agency",
     "growth agency",

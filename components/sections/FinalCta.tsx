@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/Button";
 import { fadeUp, viewport } from "@/lib/animations";
 import { siteConfig } from "@/lib/site";
+import { trackEvent } from "@/lib/analytics";
 
 const EMAIL = siteConfig.email;
 const MAILTO = `mailto:${EMAIL}?subject=Growth%20inquiry%20for%20Thryvv&body=Hi%20Thryvv%20team%2C%0A%0AHere%20is%20a%20bit%20about%20my%20business%3A%0A%0A`;
@@ -32,7 +33,13 @@ export function FinalCta() {
           growth roadmap.
         </p>
         <div className="mt-9 flex flex-wrap justify-center gap-4">
-          <Button href={MAILTO} variant="brand" size="lg">
+          <Button
+            href={MAILTO}
+            variant="brand"
+            size="lg"
+            eventName="generate_lead"
+            eventParams={{ method: "email", location: "final_cta" }}
+          >
             <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <rect x="3" y="5" width="18" height="14" rx="2" />
               <path d="m3 7 9 6 9-6" />
@@ -45,6 +52,7 @@ export function FinalCta() {
         </div>
         <a
           href={MAILTO}
+          onClick={() => trackEvent("generate_lead", { method: "email", location: "final_cta_link" })}
           className="mt-8 inline-block font-display text-lg font-semibold text-ink/80 underline decoration-brand/50 decoration-2 underline-offset-4 transition-colors hover:text-ink"
         >
           {EMAIL}
