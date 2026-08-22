@@ -2,7 +2,6 @@ import { Navbar } from "@/components/sections/Navbar";
 import { Hero } from "@/components/sections/Hero";
 import { StatsBar } from "@/components/sections/StatsBar";
 import { Work } from "@/components/sections/Work";
-import { Specialty } from "@/components/sections/Specialty";
 import { PrecisionTools } from "@/components/sections/PrecisionTools";
 import { ImpactStats } from "@/components/sections/ImpactStats";
 import { Process } from "@/components/sections/Process";
@@ -17,7 +16,6 @@ export default function Home() {
         <Hero />
         <StatsBar />
         <Work />
-        <Specialty />
         <PrecisionTools />
         <ImpactStats />
         <Process />
