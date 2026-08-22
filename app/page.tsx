@@ -16,8 +16,8 @@ export default function Home() {
         <Hero />
         <StatsBar />
         <Work />
-        <PrecisionTools />
         <ImpactStats />
+        <PrecisionTools />
         <Process />
         <FinalCta />
       </main>
