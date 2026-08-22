@@ -27,38 +27,6 @@ const projects: Project[] = [
     to: "#c2185b",
     image: "/images/bloom-preview.png",
   },
-  {
-    name: "Aurora Store",
-    tag: "E-commerce",
-    href: "https://aurora.thryvvdigital.in",
-    domain: "aurora.thryvvdigital.in",
-    from: "#ff7a4a",
-    to: "#e64a12",
-  },
-  {
-    name: "Nimbus SaaS",
-    tag: "SaaS Platform",
-    href: "https://nimbus.thryvvdigital.in",
-    domain: "nimbus.thryvvdigital.in",
-    from: "#5b8cff",
-    to: "#2a52c9",
-  },
-  {
-    name: "Vertex Studio",
-    tag: "Agency / Portfolio",
-    href: "https://vertex.thryvvdigital.in",
-    domain: "vertex.thryvvdigital.in",
-    from: "#7c5cff",
-    to: "#4c2fb0",
-  },
-  {
-    name: "Pulse Fitness",
-    tag: "Landing Page",
-    href: "https://pulse.thryvvdigital.in",
-    domain: "pulse.thryvvdigital.in",
-    from: "#10b981",
-    to: "#047857",
-  },
 ];
 
 function Preview({ project }: { project: Project }) {
@@ -151,28 +119,30 @@ export function Work() {
             </motion.p>
           </div>
 
-          <motion.div variants={fadeUp} className="hidden gap-3 sm:flex">
-            <button
-              type="button"
-              onClick={() => scrollByCards(-1)}
-              aria-label="Previous projects"
-              className="grid size-11 place-items-center rounded-full border border-white/15 text-white transition-colors hover:border-white/50 hover:bg-white/5"
-            >
-              <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="m15 18-6-6 6-6" />
-              </svg>
-            </button>
-            <button
-              type="button"
-              onClick={() => scrollByCards(1)}
-              aria-label="Next projects"
-              className="grid size-11 place-items-center rounded-full border border-white/15 text-white transition-colors hover:border-white/50 hover:bg-white/5"
-            >
-              <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="m9 6 6 6-6 6" />
-              </svg>
-            </button>
-          </motion.div>
+          {projects.length > 1 && (
+            <motion.div variants={fadeUp} className="hidden gap-3 sm:flex">
+              <button
+                type="button"
+                onClick={() => scrollByCards(-1)}
+                aria-label="Previous projects"
+                className="grid size-11 place-items-center rounded-full border border-white/15 text-white transition-colors hover:border-white/50 hover:bg-white/5"
+              >
+                <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="m15 18-6-6 6-6" />
+                </svg>
+              </button>
+              <button
+                type="button"
+                onClick={() => scrollByCards(1)}
+                aria-label="Next projects"
+                className="grid size-11 place-items-center rounded-full border border-white/15 text-white transition-colors hover:border-white/50 hover:bg-white/5"
+              >
+                <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="m9 6 6 6-6 6" />
+                </svg>
+              </button>
+            </motion.div>
+          )}
         </motion.div>
 
         <motion.div
