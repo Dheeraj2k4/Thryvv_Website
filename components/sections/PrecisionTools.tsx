@@ -87,7 +87,7 @@ export function PrecisionTools() {
     <section
       id="services"
       data-nav-theme="dark"
-      className="relative overflow-hidden bg-ink py-24 text-white sm:py-32"
+      className="relative overflow-hidden bg-ink pt-24 pb-0 text-white sm:pt-32"
     >
       <div className="pointer-events-none absolute left-1/2 top-0 h-72 w-[42rem] -translate-x-1/2 rounded-full bg-brand/10 blur-[120px]" />
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

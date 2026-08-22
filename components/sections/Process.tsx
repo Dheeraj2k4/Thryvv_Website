@@ -30,7 +30,7 @@ const steps = [
 
 export function Process() {
   return (
-    <section id="process" data-nav-theme="dark" className="bg-ink-800 py-24 text-white sm:py-32">
+    <section id="process" data-nav-theme="dark" className="bg-ink pt-20 pb-24 text-white sm:pt-28 sm:pb-32">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
           <motion.div
