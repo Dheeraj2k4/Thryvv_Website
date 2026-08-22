@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { fadeUp, stagger, viewport } from "@/lib/animations";
@@ -12,10 +13,20 @@ type Project = {
   domain: string;
   from: string;
   to: string;
+  image?: string;
 };
 
 // Dummy showcase — swap in real screenshots + subdomains as sites go live.
 const projects: Project[] = [
+  {
+    name: "Bloom & Co.",
+    tag: "D2C Brand Site",
+    href: "https://bloom.thryvvdigital.in",
+    domain: "bloom.thryvvdigital.in",
+    from: "#ff5c8a",
+    to: "#c2185b",
+    image: "/images/bloom-preview.png",
+  },
   {
     name: "Aurora Store",
     tag: "E-commerce",
@@ -61,27 +72,39 @@ function Preview({ project }: { project: Project }) {
           {project.domain}
         </span>
       </div>
-      <div
-        className="aspect-[16/10] p-5"
-        style={{
-          backgroundImage: `linear-gradient(135deg, ${project.from}, ${project.to})`,
-        }}
-      >
-        <div className="h-3 w-1/2 rounded bg-white/50" />
-        <div className="mt-2.5 h-3 w-2/3 rounded bg-white/30" />
-        <div className="mt-5 flex gap-3">
-          <div className="size-12 rounded-lg bg-white/35" />
-          <div className="flex-1 space-y-2 pt-1">
-            <div className="h-2.5 w-full rounded bg-white/25" />
-            <div className="h-2.5 w-4/5 rounded bg-white/25" />
-            <div className="h-2.5 w-3/5 rounded bg-white/20" />
+      {project.image ? (
+        <div className="relative aspect-[16/10] overflow-hidden">
+          <Image
+            src={project.image}
+            alt={`${project.name} website preview`}
+            fill
+            sizes="(max-width: 640px) 300px, 380px"
+            className="object-cover object-top"
+          />
+        </div>
+      ) : (
+        <div
+          className="aspect-[16/10] p-5"
+          style={{
+            backgroundImage: `linear-gradient(135deg, ${project.from}, ${project.to})`,
+          }}
+        >
+          <div className="h-3 w-1/2 rounded bg-white/50" />
+          <div className="mt-2.5 h-3 w-2/3 rounded bg-white/30" />
+          <div className="mt-5 flex gap-3">
+            <div className="size-12 rounded-lg bg-white/35" />
+            <div className="flex-1 space-y-2 pt-1">
+              <div className="h-2.5 w-full rounded bg-white/25" />
+              <div className="h-2.5 w-4/5 rounded bg-white/25" />
+              <div className="h-2.5 w-3/5 rounded bg-white/20" />
+            </div>
+          </div>
+          <div className="mt-5 flex gap-2">
+            <div className="h-7 w-24 rounded-full bg-white/70" />
+            <div className="h-7 w-20 rounded-full bg-white/25" />
           </div>
         </div>
-        <div className="mt-5 flex gap-2">
-          <div className="h-7 w-24 rounded-full bg-white/70" />
-          <div className="h-7 w-20 rounded-full bg-white/25" />
-        </div>
-      </div>
+      )}
     </div>
   );
 }
@@ -158,7 +181,7 @@ export function Work() {
           whileInView="show"
           viewport={viewport}
           ref={trackRef}
-          className="no-scrollbar mt-12 flex snap-x snap-mandatory gap-6 overflow-x-auto pb-4"
+          className="no-scrollbar mt-12 flex snap-x snap-mandatory gap-6 overflow-x-auto px-1 pb-6 pt-3"
         >
           {projects.map((project) => (
             <a
