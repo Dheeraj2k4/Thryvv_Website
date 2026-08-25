@@ -2,12 +2,15 @@
 
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { siteConfig } from "@/lib/site";
 import { trackEvent } from "@/lib/analytics";
+
+// Public Web3Forms access key — safe to expose; get yours at https://web3forms.com
+const WEB3FORMS_KEY = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY ?? "";
 
 export function LeadPopup() {
   const [open, setOpen] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [status, setStatus] = useState<"idle" | "submitting" | "error">("idle");
   const shownRef = useRef(false);
 
   // Reveal once the visitor scrolls past the portfolio ("#work") section.
@@ -53,7 +56,7 @@ export function LeadPopup() {
     setOpen(false);
   }
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = e.currentTarget;
     const data = new FormData(form);
@@ -62,23 +65,36 @@ export function LeadPopup() {
     const phone = String(data.get("phone") ?? "").trim();
     const need = String(data.get("need") ?? "").trim();
 
-    trackEvent("generate_lead", { method: "popup", location: "after_work" });
+    setStatus("submitting");
 
-    const body = [
-      `Name: ${name}`,
-      `Email: ${email}`,
-      phone && `Phone: ${phone}`,
-      need && `What they need: ${need}`,
-    ]
-      .filter(Boolean)
-      .join("\n");
+    try {
+      const res = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          access_key: WEB3FORMS_KEY,
+          subject: "New enquiry from Thryvv website",
+          from_name: "Thryvv Website",
+          name,
+          email,
+          phone: phone || "Not provided",
+          need: need || "Not provided",
+        }),
+      });
+      const result = await res.json();
 
-    const mailto = `mailto:${siteConfig.email}?subject=${encodeURIComponent(
-      "New enquiry from Thryvv website"
-    )}&body=${encodeURIComponent(body)}`;
-
-    setSubmitted(true);
-    window.location.href = mailto;
+      if (result.success) {
+        trackEvent("generate_lead", { method: "popup", location: "after_work" });
+        setSubmitted(true);
+      } else {
+        setStatus("error");
+      }
+    } catch {
+      setStatus("error");
+    }
   }
 
   return (
@@ -211,10 +227,18 @@ export function LeadPopup() {
 
                   <button
                     type="submit"
-                    className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-brand px-7 py-3.5 text-base font-semibold text-white shadow-lg shadow-brand/20 transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-dark"
+                    disabled={status === "submitting"}
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-brand px-7 py-3.5 text-base font-semibold text-white shadow-lg shadow-brand/20 transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-dark disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
                   >
-                    Send my details
+                    {status === "submitting" ? "Sending…" : "Send my details"}
                   </button>
+
+                  {status === "error" && (
+                    <p className="text-center text-sm text-red-400">
+                      Something went wrong. Please try again or email us
+                      directly.
+                    </p>
+                  )}
                 </form>
               </>
             )}
