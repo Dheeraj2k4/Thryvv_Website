@@ -20,7 +20,7 @@ type Project = {
 const projects: Project[] = [
   {
     name: "Aroma",
-    tag: "Fragrance Brand Site",
+    tag: "Café Website",
     href: "https://aroma.thryvvdigital.in/",
     domain: "aroma.thryvvdigital.in",
     from: "#b98a4e",

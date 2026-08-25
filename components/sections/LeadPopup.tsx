@@ -5,8 +5,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import { siteConfig } from "@/lib/site";
 import { trackEvent } from "@/lib/analytics";
 
-const STORAGE_KEY = "thryvv_lead_popup_dismissed";
-
 export function LeadPopup() {
   const [open, setOpen] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -15,7 +13,6 @@ export function LeadPopup() {
   // Reveal once the visitor scrolls past the portfolio ("#work") section.
   useEffect(() => {
     if (typeof window === "undefined") return;
-    if (sessionStorage.getItem(STORAGE_KEY)) return;
 
     const work = document.getElementById("work");
     if (!work) return;
@@ -54,7 +51,6 @@ export function LeadPopup() {
 
   function close() {
     setOpen(false);
-    sessionStorage.setItem(STORAGE_KEY, "1");
   }
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -82,7 +78,6 @@ export function LeadPopup() {
     )}&body=${encodeURIComponent(body)}`;
 
     setSubmitted(true);
-    sessionStorage.setItem(STORAGE_KEY, "1");
     window.location.href = mailto;
   }
 
