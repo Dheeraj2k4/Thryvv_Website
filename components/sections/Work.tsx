@@ -36,6 +36,15 @@ const projects: Project[] = [
     to: "#c2185b",
     image: "/images/bloom-preview.png",
   },
+  {
+    name: "Veilux",
+    tag: "Luxury Brand Site",
+    href: "https://veilux.thryvvdigital.in",
+    domain: "veilux.thryvvdigital.in",
+    from: "#6d5b8a",
+    to: "#2b1f45",
+    image: "/images/veilux-preview.png",
+  },
 ];
 
 function Preview({ project }: { project: Project }) {
