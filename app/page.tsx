@@ -7,6 +7,7 @@ import { ImpactStats } from "@/components/sections/ImpactStats";
 import { Process } from "@/components/sections/Process";
 import { FinalCta } from "@/components/sections/FinalCta";
 import { Footer } from "@/components/sections/Footer";
+import { LeadPopup } from "@/components/sections/LeadPopup";
 
 export default function Home() {
   return (
@@ -22,6 +23,7 @@ export default function Home() {
         <FinalCta />
       </main>
       <Footer />
+      <LeadPopup />
     </>
   );
 }

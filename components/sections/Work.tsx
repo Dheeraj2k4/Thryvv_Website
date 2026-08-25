@@ -19,6 +19,15 @@ type Project = {
 // Dummy showcase — swap in real screenshots + subdomains as sites go live.
 const projects: Project[] = [
   {
+    name: "Aroma",
+    tag: "Fragrance Brand Site",
+    href: "https://aroma.thryvvdigital.in/",
+    domain: "aroma.thryvvdigital.in",
+    from: "#b98a4e",
+    to: "#5a3d1f",
+    image: "/images/aroma-preview.png",
+  },
+  {
     name: "Bloom & Co.",
     tag: "D2C Brand Site",
     href: "https://bloom.thryvvdigital.in",
@@ -26,15 +35,6 @@ const projects: Project[] = [
     from: "#ff5c8a",
     to: "#c2185b",
     image: "/images/bloom-preview.png",
-  },
-  {
-    name: "Veilux",
-    tag: "Luxury Brand Site",
-    href: "http://veilux.thryvvdigital.in",
-    domain: "veilux.thryvvdigital.in",
-    from: "#8e7cff",
-    to: "#4527a0",
-    image: "/images/veilux-preview.png",
   },
 ];
 
