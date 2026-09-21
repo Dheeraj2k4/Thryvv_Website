@@ -24,7 +24,7 @@ export function LeadPopup() {
     try {
       promptedRef.current = sessionStorage.getItem(PROMPT_SESSION_KEY) === "true";
     } catch {}
-    const show = (location: "contact" | "scroll_halfway") => {
+    const show = (location: "contact" | "after_services") => {
       promptedRef.current = true;
       try {
         sessionStorage.setItem(PROMPT_SESSION_KEY, "true");
@@ -36,10 +36,10 @@ export function LeadPopup() {
     const checkScroll = () => {
       scrollFrame = 0;
       if (promptedRef.current || document.hidden) return;
-      const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight;
-      if (scrollableHeight <= 0 || window.scrollY / scrollableHeight < 0.5) return;
+      const services = document.getElementById("services");
+      if (!services || services.getBoundingClientRect().bottom > 0) return;
       if (document.querySelector("dialog[open]") || document.activeElement?.matches("input, textarea, select, [contenteditable='true']")) return;
-      show("scroll_halfway");
+      show("after_services");
     };
     const scheduleCheck = () => {
       if (!scrollFrame && !promptedRef.current) scrollFrame = requestAnimationFrame(checkScroll);

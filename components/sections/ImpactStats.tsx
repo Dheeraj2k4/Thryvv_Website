@@ -8,7 +8,7 @@ import { fadeUp, viewport } from "@/lib/animations";
 const commitments = [
   { value: "1:1", label: "Founder-led collaboration" },
   { value: "100%", label: "Built around your business" },
-  { value: "48h", label: "To start the conversation" },
+  { value: "12h", label: "To start the conversation" },
 ];
 
 export function ImpactStats() {
