@@ -8,10 +8,10 @@ type Variant = "brand" | "brand-outline" | "dark" | "light" | "outline" | "glass
 type Size = "md" | "lg";
 
 const base =
-  "inline-flex items-center justify-center gap-2 rounded-full font-body font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2";
+  "inline-flex min-h-11 items-center justify-center gap-3 rounded-full font-body font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2";
 
 const variants: Record<Variant, string> = {
-  brand: "bg-brand text-white hover:bg-brand-dark hover:-translate-y-0.5 shadow-lg shadow-brand/20",
+  brand: "bg-brand text-[#171715] hover:bg-brand-dark hover:text-white hover:-translate-y-0.5",
   "brand-outline":
     "border border-brand text-brand hover:bg-brand hover:text-white",
   dark: "bg-ink text-white hover:bg-ink-700 hover:-translate-y-0.5",
@@ -23,7 +23,7 @@ const variants: Record<Variant, string> = {
 
 const sizes: Record<Size, string> = {
   md: "px-5 py-2.5 text-sm",
-  lg: "px-7 py-3.5 text-base",
+  lg: "px-6 py-4 text-sm",
 };
 
 type ButtonProps = {

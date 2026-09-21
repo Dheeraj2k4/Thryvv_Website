@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { fadeUp, viewport } from "@/lib/animations";
 import { siteConfig } from "@/lib/site";
@@ -11,52 +12,26 @@ const MAILTO = `mailto:${EMAIL}?subject=Growth%20inquiry%20for%20Thryvv&body=Hi%
 
 export function FinalCta() {
   return (
-    <section
-      id="contact"
-      className="relative overflow-hidden bg-white py-24 sm:py-32"
-    >
-      <div className="pointer-events-none absolute left-1/2 top-1/2 h-72 w-[42rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand/10 blur-[120px]" />
+    <section id="contact" className="contact-section" aria-labelledby="contact-title">
       <motion.div
         variants={fadeUp}
         initial="hidden"
         whileInView="show"
         viewport={viewport}
-        className="relative mx-auto max-w-3xl px-4 text-center sm:px-6"
+        className="page-shell"
       >
-        <h2 className="font-display text-5xl font-extrabold leading-[0.95] tracking-tight sm:text-6xl">
-          Ready for the <br />
-          <span className="text-brand">Next Level?</span>
-        </h2>
-        <p className="mx-auto mt-5 max-w-lg text-lg text-ink/60">
-          Tell us about your business and where you want to take it. Send us an
-          email and we&apos;ll get back to you within 48 hours with a custom
-          growth roadmap.
-        </p>
-        <div className="mt-9 flex flex-wrap justify-center gap-4">
-          <Button
-            href={MAILTO}
-            variant="brand"
-            size="lg"
-            eventName="generate_lead"
-            eventParams={{ method: "email", location: "final_cta" }}
-          >
-            <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="3" y="5" width="18" height="14" rx="2" />
-              <path d="m3 7 9 6 9-6" />
-            </svg>
-            Email us
-          </Button>
-          <Button href="#services" variant="glass" size="lg">
-            Explore services
-          </Button>
+        <p className="section-label">05 / Your next chapter</p>
+        <div className="contact-title-row">
+          <h2 id="contact-title">Something great<br />starts with <span>hello.</span></h2>
+          <button type="button" className="contact-arrow" aria-label="Start a project" title="Start a project" onClick={() => window.dispatchEvent(new Event("thryvv:inquiry"))}><ArrowUpRight strokeWidth={1} aria-hidden="true" /></button>
         </div>
-        <a
-          href={MAILTO}
-          onClick={() => trackEvent("generate_lead", { method: "email", location: "final_cta_link" })}
-          className="mt-8 inline-block font-display text-lg font-semibold text-ink/80 underline decoration-brand/50 decoration-2 underline-offset-4 transition-colors hover:text-ink"
-        >
-          {EMAIL}
-        </a>
+        <div className="contact-bottom">
+          <p>Have an idea, a challenge, or a big ambition?<br />We&apos;d love to hear it. Expect a reply within 48 hours.</p>
+          <div className="contact-actions">
+            <Button href={MAILTO} variant="dark" size="lg" eventName="generate_lead" eventParams={{ method: "email", location: "final_cta" }}>Say hello <ArrowUpRight size={18} aria-hidden="true" /></Button>
+            <a href={MAILTO} onClick={() => trackEvent("generate_lead", { method: "email", location: "final_cta_link" })}>{EMAIL}</a>
+          </div>
+        </div>
       </motion.div>
     </section>
   );

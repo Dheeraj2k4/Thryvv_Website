@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Archivo, Inter, Sora } from "next/font/google";
+import { Archivo, Sora } from "next/font/google";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { siteConfig } from "@/lib/site";
 import { SmoothScroll } from "@/components/SmoothScroll";
@@ -12,12 +12,6 @@ const archivo = Archivo({
   variable: "--font-archivo",
   subsets: ["latin"],
   style: ["normal", "italic"],
-  display: "swap",
-});
-
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
   display: "swap",
 });
 
@@ -115,7 +109,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${archivo.variable} ${inter.variable} ${sora.variable} h-full antialiased`}
+      className={`${archivo.variable} ${sora.variable} h-full antialiased`}
     >
       <body className="min-h-full bg-white text-ink font-body">
         <script

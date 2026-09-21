@@ -1,93 +1,26 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/Button";
-import { Eyebrow } from "@/components/ui/Eyebrow";
+import { ArrowUpRight } from "lucide-react";
 import { fadeUp, stagger, viewport } from "@/lib/animations";
 
 const steps = [
-  {
-    no: "01",
-    title: "Deep Dive",
-    body: "We audit your funnel, data, and market to find the exact levers that move revenue.",
-  },
-  {
-    no: "02",
-    title: "Strategic Architecture",
-    body: "A clear growth blueprint — channels, messaging, and systems mapped to measurable targets.",
-  },
-  {
-    no: "03",
-    title: "Rapid Deployment",
-    body: "We launch fast, test aggressively, and start compounding wins within the first cycles.",
-  },
-  {
-    no: "04",
-    title: "Motion Continuum",
-    body: "Continuous optimization loops keep momentum building long after go-live.",
-  },
+  { number: "01", title: "Discover", body: "First, we listen. Your business, your audience, and what success actually looks like for you." },
+  { number: "02", title: "Define", body: "We turn the insights into a clear direction. The strategy, the scope, and a plan we both believe in." },
+  { number: "03", title: "Create", body: "Design meets development. We build, share, refine, and keep you close to the process." },
+  { number: "04", title: "Evolve", body: "Launch is a starting point. We measure, learn, and find the next opportunity to move you forward." },
 ];
 
 export function Process() {
   return (
-    <section id="process" data-nav-theme="dark" className="bg-ink pt-20 pb-24 text-white sm:pt-28 sm:pb-32">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
-          <motion.div
-            variants={fadeUp}
-            initial="hidden"
-            whileInView="show"
-            viewport={viewport}
-          >
-            <Eyebrow dark>Our process</Eyebrow>
-            <h2 className="mt-5 font-display text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl">
-              How we build the{" "}
-              <span className="text-brand">future</span> of your brand.
-            </h2>
-          </motion.div>
-          <motion.div
-            variants={fadeUp}
-            initial="hidden"
-            whileInView="show"
-            viewport={viewport}
-            className="lg:justify-self-end"
-          >
-            <Button
-              href="#contact"
-              variant="brand"
-              size="lg"
-              eventName="booking_click"
-              eventParams={{ location: "process" }}
-            >
-              Book a growth call
-            </Button>
-          </motion.div>
-        </div>
-
-        <motion.div
-          variants={stagger}
-          initial="hidden"
-          whileInView="show"
-          viewport={viewport}
-          className="mt-16 grid gap-px overflow-hidden rounded-3xl border border-white/10 bg-white/10 sm:grid-cols-2 lg:grid-cols-4"
-        >
-          {steps.map((step) => (
-            <motion.div
-              key={step.no}
-              variants={fadeUp}
-              className="group bg-ink-800 p-8 transition-colors hover:bg-ink-700"
-            >
-              <p className="font-display text-5xl font-extrabold text-white/15 transition-colors group-hover:text-brand">
-                {step.no}
-              </p>
-              <h3 className="mt-6 font-display text-xl font-bold">
-                {step.title}
-              </h3>
-              <p className="mt-3 text-sm leading-relaxed text-white/55">
-                {step.body}
-              </p>
-            </motion.div>
-          ))}
+    <section id="process" className="process-section section-space" aria-labelledby="process-title">
+      <div className="page-shell">
+        <motion.div className="section-heading" variants={fadeUp} initial="hidden" whileInView="show" viewport={viewport}>
+          <div><p className="section-label">04 / How we work</p><h2 id="process-title">A clear process.<br /><span>A shared ambition.</span></h2></div>
+          <a href="#contact" className="text-link">Start a conversation <ArrowUpRight size={18} aria-hidden="true" /></a>
+        </motion.div>
+        <motion.div className="process-grid" variants={stagger} initial="hidden" whileInView="show" viewport={viewport}>
+          {steps.map((step) => <motion.div key={step.number} variants={fadeUp} className="process-step"><div className="process-step-top"><span>{step.number}</span><ArrowUpRight size={20} aria-hidden="true" /></div><h3>{step.title}</h3><p>{step.body}</p></motion.div>)}
         </motion.div>
       </div>
     </section>

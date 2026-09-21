@@ -1,56 +1,74 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
+import { ArrowUpRight, Check, X } from "lucide-react";
+import { useLenis } from "lenis/react";
 import { trackEvent } from "@/lib/analytics";
+import { siteConfig } from "@/lib/site";
 
 // Public Web3Forms access key — safe to expose; get yours at https://web3forms.com
 const WEB3FORMS_KEY = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY ?? "";
+const PROMPT_SESSION_KEY = "thryvv:lead-prompt-shown";
 
 export function LeadPopup() {
   const [open, setOpen] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [status, setStatus] = useState<"idle" | "submitting" | "error">("idle");
-  const shownRef = useRef(false);
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  const promptedRef = useRef(false);
+  const lenis = useLenis();
 
-  // Reveal once the visitor scrolls past the portfolio ("#work") section.
   useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    const work = document.getElementById("work");
-    if (!work) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        const scrolledPast = !entry.isIntersecting && entry.boundingClientRect.top < 0;
-        if (scrolledPast && !shownRef.current) {
-          shownRef.current = true;
-          setOpen(true);
-          trackEvent("lead_popup_open", { location: "after_work" });
-          observer.disconnect();
-        }
-      },
-      { threshold: 0 }
-    );
-
-    observer.observe(work);
-    return () => observer.disconnect();
+    let scrollFrame = 0;
+    try {
+      promptedRef.current = sessionStorage.getItem(PROMPT_SESSION_KEY) === "true";
+    } catch {}
+    const show = (location: "contact" | "scroll_halfway") => {
+      promptedRef.current = true;
+      try {
+        sessionStorage.setItem(PROMPT_SESSION_KEY, "true");
+      } catch {}
+      setOpen(true);
+      trackEvent("lead_popup_open", { location });
+    };
+    const showFromContact = () => show("contact");
+    const checkScroll = () => {
+      scrollFrame = 0;
+      if (promptedRef.current || document.hidden) return;
+      const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight;
+      if (scrollableHeight <= 0 || window.scrollY / scrollableHeight < 0.5) return;
+      if (document.querySelector("dialog[open]") || document.activeElement?.matches("input, textarea, select, [contenteditable='true']")) return;
+      show("scroll_halfway");
+    };
+    const scheduleCheck = () => {
+      if (!scrollFrame && !promptedRef.current) scrollFrame = requestAnimationFrame(checkScroll);
+    };
+    window.addEventListener("thryvv:inquiry", showFromContact);
+    window.addEventListener("scroll", scheduleCheck, { passive: true });
+    window.addEventListener("resize", scheduleCheck);
+    scheduleCheck();
+    return () => {
+      cancelAnimationFrame(scrollFrame);
+      window.removeEventListener("thryvv:inquiry", showFromContact);
+      window.removeEventListener("scroll", scheduleCheck);
+      window.removeEventListener("resize", scheduleCheck);
+    };
   }, []);
 
-  // Lock body scroll and allow closing with Escape while the modal is open.
   useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") close();
-    };
-    document.addEventListener("keydown", onKey);
+    const dialog = dialogRef.current;
+    if (!open || !dialog) return;
+    const previousOverflow = document.body.style.overflow;
+    dialog.showModal();
+    lenis?.stop();
     document.body.style.overflow = "hidden";
     return () => {
-      document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = "";
+      dialog.close();
+      lenis?.start();
+      document.body.style.overflow = previousOverflow;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open]);
+  }, [open, lenis]);
 
   function close() {
     setOpen(false);
@@ -64,6 +82,14 @@ export function LeadPopup() {
     const email = String(data.get("email") ?? "").trim();
     const phone = String(data.get("phone") ?? "").trim();
     const need = String(data.get("need") ?? "").trim();
+
+    if (!WEB3FORMS_KEY) {
+      const subject = encodeURIComponent("New enquiry from Thryvv website");
+      const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\nPhone: ${phone || "Not provided"}\n\nProject details:\n${need || "Not provided"}`);
+      window.location.href = `mailto:${siteConfig.email}?subject=${subject}&body=${body}`;
+      trackEvent("lead_email_open", { location: "inquiry_dialog" });
+      return;
+    }
 
     setStatus("submitting");
 
@@ -86,8 +112,8 @@ export function LeadPopup() {
       });
       const result = await res.json();
 
-      if (result.success) {
-        trackEvent("generate_lead", { method: "popup", location: "after_work" });
+      if (res.ok && result.success) {
+        trackEvent("generate_lead", { method: "popup", location: "contact" });
         setSubmitted(true);
       } else {
         setStatus("error");
@@ -98,57 +124,36 @@ export function LeadPopup() {
   }
 
   return (
-    <AnimatePresence>
-      {open && (
-        <motion.div
-          className="fixed inset-0 z-[100] flex items-center justify-center p-4"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          aria-modal="true"
-          role="dialog"
-          aria-labelledby="lead-popup-title"
-        >
-          <div
-            className="absolute inset-0 bg-ink/70 backdrop-blur-sm"
-            onClick={close}
-          />
+    <dialog ref={dialogRef} className="lead-dialog" aria-labelledby="lead-popup-title" onCancel={close} onKeyDown={(event) => { if (event.key === "Escape") { event.preventDefault(); close(); } }} onClick={(event) => { if (event.target === event.currentTarget) close(); }} data-lenis-prevent>
           <motion.div
-            initial={{ opacity: 0, y: 24, scale: 0.97 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 24, scale: 0.97 }}
-            transition={{ type: "spring", stiffness: 260, damping: 24 }}
-            className="relative w-full max-w-md rounded-2xl border border-white/10 bg-ink-800 p-6 text-white shadow-2xl sm:p-8"
+            className="relative w-full bg-white p-6 text-ink sm:p-8"
           >
             <button
               type="button"
               onClick={close}
               aria-label="Close"
-              className="absolute right-4 top-4 grid size-9 place-items-center rounded-full border border-white/15 text-white/70 transition-colors hover:border-white/40 hover:text-white"
+              title="Close inquiry"
+              className="absolute right-4 top-4 grid size-11 place-items-center rounded-full border border-black/15 text-ink transition-colors hover:bg-cloud"
             >
-              <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M18 6 6 18M6 6l12 12" />
-              </svg>
+              <X size={18} />
             </button>
 
             {submitted ? (
-              <div className="py-6 text-center">
+              <div className="py-6 text-center" role="status">
                 <div className="mx-auto grid size-14 place-items-center rounded-full bg-brand/20 text-brand">
-                  <svg viewBox="0 0 24 24" className="size-7" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M20 6 9 17l-5-5" />
-                  </svg>
+                  <Check size={28} aria-hidden="true" />
                 </div>
-                <h3 className="mt-5 font-display text-2xl font-bold">
+                <h3 id="lead-popup-title" className="mt-5 font-display text-2xl font-bold">
                   Thanks — talk soon!
                 </h3>
-                <p className="mt-2 text-white/60">
+                <p className="mt-2 text-ink/65">
                   We&apos;ve got your details and will reach out shortly.
                 </p>
                 <div className="mt-6">
                   <button
                     type="button"
                     onClick={close}
-                    className="inline-flex items-center justify-center gap-2 rounded-full border border-white/20 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:border-white/50 hover:bg-white/5"
+                    className="inline-flex min-h-11 items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm text-white"
                   >
                     Close
                   </button>
@@ -156,21 +161,21 @@ export function LeadPopup() {
               </div>
             ) : (
               <>
-                <p className="text-sm font-semibold uppercase tracking-wider text-brand-light">
+                <p className="text-xs font-medium uppercase text-brand-dark">
                   Let&apos;s talk
                 </p>
                 <h3
                   id="lead-popup-title"
                   className="mt-2 font-display text-2xl font-extrabold leading-tight sm:text-3xl"
                 >
-                  Like what you see?
+                  What&apos;s your next big idea?
                 </h3>
-                <p className="mt-2 text-white/60">
+                <p className="mt-3 text-sm leading-relaxed text-ink/65">
                   Leave your details and we&apos;ll get in touch about your
                   project.
                 </p>
 
-                <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+                <form onSubmit={handleSubmit} className="inquiry-form mt-6 space-y-4">
                   <div>
                     <label htmlFor="lead-name" className="mb-1.5 block text-sm text-white/70">
                       Name <span className="text-brand">*</span>
@@ -201,7 +206,7 @@ export function LeadPopup() {
                   </div>
                   <div>
                     <label htmlFor="lead-phone" className="mb-1.5 block text-sm text-white/70">
-                      Phone number <span className="text-white/40">(optional)</span>
+                      Phone number <span className="text-ink/50">(optional)</span>
                     </label>
                     <input
                       id="lead-phone"
@@ -214,7 +219,7 @@ export function LeadPopup() {
                   </div>
                   <div>
                     <label htmlFor="lead-need" className="mb-1.5 block text-sm text-white/70">
-                      What do you need? <span className="text-white/40">(optional)</span>
+                      What do you need? <span className="text-ink/50">(optional)</span>
                     </label>
                     <textarea
                       id="lead-need"
@@ -230,21 +235,20 @@ export function LeadPopup() {
                     disabled={status === "submitting"}
                     className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-brand px-7 py-3.5 text-base font-semibold text-white shadow-lg shadow-brand/20 transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-dark disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
                   >
-                    {status === "submitting" ? "Sending…" : "Send my details"}
+                    {status === "submitting" ? "Sending…" : WEB3FORMS_KEY ? "Send my details" : <>Continue in email <ArrowUpRight size={18} aria-hidden="true" /></>}
                   </button>
 
+                  {!WEB3FORMS_KEY && <p className="text-center text-xs leading-relaxed text-ink/65">Opens your email app with these details. Send the email to complete your enquiry.<br /><a href={`mailto:${siteConfig.email}`} className="break-all underline">{siteConfig.email}</a></p>}
+
                   {status === "error" && (
-                    <p className="text-center text-sm text-red-400">
-                      Something went wrong. Please try again or email us
-                      directly.
+                    <p role="alert" className="text-center text-sm text-brand-dark">
+                      We couldn&apos;t send your message. Please try again or <a href={`mailto:${siteConfig.email}`} className="underline">email us directly</a>.
                     </p>
                   )}
                 </form>
               </>
             )}
           </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+    </dialog>
   );
 }
