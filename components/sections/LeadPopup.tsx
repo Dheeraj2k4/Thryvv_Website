@@ -2,13 +2,13 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowUpRight, Check, X } from "lucide-react";
+import { Check, X } from "lucide-react";
 import { useLenis } from "lenis/react";
 import { trackEvent } from "@/lib/analytics";
 import { siteConfig } from "@/lib/site";
 
 // Public Web3Forms access key — safe to expose; get yours at https://web3forms.com
-const WEB3FORMS_KEY = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY ?? "";
+const WEB3FORMS_KEY = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY?.trim() || "1b94403a-4d2a-4934-9122-51c35959ec6d";
 const PROMPT_SESSION_KEY = "thryvv:lead-prompt-shown";
 
 export function LeadPopup() {
@@ -76,6 +76,7 @@ export function LeadPopup() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (status === "submitting") return;
     const form = e.currentTarget;
     const data = new FormData(form);
     const name = String(data.get("name") ?? "").trim();
@@ -83,13 +84,14 @@ export function LeadPopup() {
     const phone = String(data.get("phone") ?? "").trim();
     const need = String(data.get("need") ?? "").trim();
 
-    if (!WEB3FORMS_KEY) {
-      const subject = encodeURIComponent("New enquiry from Thryvv website");
-      const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\nPhone: ${phone || "Not provided"}\n\nProject details:\n${need || "Not provided"}`);
-      window.location.href = `mailto:${siteConfig.email}?subject=${subject}&body=${body}`;
-      trackEvent("lead_email_open", { location: "inquiry_dialog" });
-      return;
-    }
+    data.set("access_key", WEB3FORMS_KEY);
+    data.set("subject", "New enquiry from Thryvv website");
+    data.set("from_name", "Thryvv Website");
+    data.set("name", name);
+    data.set("email", email);
+    data.set("phone", phone || "Not provided");
+    data.set("message", need || "Not provided");
+    data.delete("need");
 
     setStatus("submitting");
 
@@ -97,23 +99,16 @@ export function LeadPopup() {
       const res = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
           Accept: "application/json",
         },
-        body: JSON.stringify({
-          access_key: WEB3FORMS_KEY,
-          subject: "New enquiry from Thryvv website",
-          from_name: "Thryvv Website",
-          name,
-          email,
-          phone: phone || "Not provided",
-          need: need || "Not provided",
-        }),
+        body: data,
       });
       const result = await res.json();
 
       if (res.ok && result.success) {
         trackEvent("generate_lead", { method: "popup", location: "contact" });
+        form.reset();
+        setStatus("idle");
         setSubmitted(true);
       } else {
         setStatus("error");
@@ -235,10 +230,8 @@ export function LeadPopup() {
                     disabled={status === "submitting"}
                     className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-brand px-7 py-3.5 text-base font-semibold text-white shadow-lg shadow-brand/20 transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-dark disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
                   >
-                    {status === "submitting" ? "Sending…" : WEB3FORMS_KEY ? "Send my details" : <>Continue in email <ArrowUpRight size={18} aria-hidden="true" /></>}
+                    {status === "submitting" ? "Sending…" : "Send my details"}
                   </button>
-
-                  {!WEB3FORMS_KEY && <p className="text-center text-xs leading-relaxed text-ink/65">Opens your email app with these details. Send the email to complete your enquiry.<br /><a href={`mailto:${siteConfig.email}`} className="break-all underline">{siteConfig.email}</a></p>}
 
                   {status === "error" && (
                     <p role="alert" className="text-center text-sm text-brand-dark">
