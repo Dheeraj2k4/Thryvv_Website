@@ -43,16 +43,14 @@ export function Work() {
     if (!showcase) return;
     let inView = false;
     let dragging = false;
-    let hovered = window.matchMedia("(hover: hover)").matches && showcase.matches(":hover");
     let focusFrame = 0;
     const syncPlayback = () => {
-      const canPlay = !autoplayPaused && reducedMotion === false && inView && !hovered && !dragging && !document.hidden && !showcase.contains(document.activeElement);
+      const keyboardFocused = showcase.contains(document.activeElement) && document.activeElement?.matches(":focus-visible");
+      const canPlay = !autoplayPaused && reducedMotion === false && inView && !dragging && !document.hidden && !keyboardFocused;
       if (canPlay && !autoplay.isPlaying()) autoplay.play();
       if (!canPlay) autoplay.stop();
     };
-    const enter = (event: PointerEvent) => { if (event.pointerType === "mouse") { hovered = true; syncPlayback(); } };
-    const leave = () => { hovered = false; syncPlayback(); };
-    const focusOut = () => { cancelAnimationFrame(focusFrame); focusFrame = requestAnimationFrame(syncPlayback); };
+    const schedulePlayback = () => { cancelAnimationFrame(focusFrame); focusFrame = requestAnimationFrame(syncPlayback); };
     const dragStart = () => { dragging = true; syncPlayback(); };
     const dragEnd = () => { dragging = false; syncPlayback(); };
     const playbackStarted = () => setIsPlaying(true);
@@ -64,10 +62,10 @@ export function Work() {
 
     carouselApi.on("autoplay:play", playbackStarted).on("autoplay:stop", playbackStopped);
     carouselApi.on("pointerDown", dragStart).on("pointerUp", dragEnd).on("reInit", syncPlayback);
-    showcase.addEventListener("pointerenter", enter);
-    showcase.addEventListener("pointerleave", leave);
+    showcase.addEventListener("pointerdown", schedulePlayback);
+    showcase.addEventListener("keydown", schedulePlayback);
     showcase.addEventListener("focusin", syncPlayback);
-    showcase.addEventListener("focusout", focusOut);
+    showcase.addEventListener("focusout", schedulePlayback);
     document.addEventListener("visibilitychange", syncPlayback);
     observer.observe(showcase);
     return () => {
@@ -76,10 +74,10 @@ export function Work() {
       cancelAnimationFrame(focusFrame);
       carouselApi.off("autoplay:play", playbackStarted).off("autoplay:stop", playbackStopped);
       carouselApi.off("pointerDown", dragStart).off("pointerUp", dragEnd).off("reInit", syncPlayback);
-      showcase.removeEventListener("pointerenter", enter);
-      showcase.removeEventListener("pointerleave", leave);
+      showcase.removeEventListener("pointerdown", schedulePlayback);
+      showcase.removeEventListener("keydown", schedulePlayback);
       showcase.removeEventListener("focusin", syncPlayback);
-      showcase.removeEventListener("focusout", focusOut);
+      showcase.removeEventListener("focusout", schedulePlayback);
       document.removeEventListener("visibilitychange", syncPlayback);
     };
   }, [carouselApi, autoplay, autoplayPaused, reducedMotion]);
